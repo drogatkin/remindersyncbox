@@ -34,6 +34,9 @@ public class Backup extends Restful<JsonArray, String, RemindersyncboxModel> {
     		ow.write(in.toString());
     	} catch (IOException ie) {
     		log("", ie);
+    		return """
+    		           {"code":"ERROR"}
+    		        """;
     	}
         return """
            {"code":"OK"}
@@ -56,12 +59,14 @@ public class Backup extends Restful<JsonArray, String, RemindersyncboxModel> {
     	String storeDir = getConfigValue("store_dir", System.getProperty("user.home"));
     	File f2 = new File(storeDir, "myremiders.json");
     	if (f2.exists()) { 
-    		try {
-    			return Stream.streamToString(new FileInputStream(f2), "UTF-8", -1);
+    		try (FileInputStream is = new FileInputStream(f2)){
+    			return Stream.streamToString(is, "UTF-8", -1);
     		} catch (IOException ie) {
         		log("", ie);
+        		throw new RuntimeException(""+ie);
         	}
     	}
-		return null;
+    	throw new RuntimeException("File: "+f2+" not found");
+		//return null;
 	}
 }
