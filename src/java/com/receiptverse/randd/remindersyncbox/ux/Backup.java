@@ -20,7 +20,8 @@ import javax.json.Json;
 import javax.json.JsonArray;
 
 public class Backup extends Restful<JsonArray, String, RemindersyncboxModel> {
-    
+    // TODO backup/store name manipulation isolate in a separate method
+	
     @Override
     protected String storeModel(JsonArray in) { 
     	log("store model %s", null, in);
