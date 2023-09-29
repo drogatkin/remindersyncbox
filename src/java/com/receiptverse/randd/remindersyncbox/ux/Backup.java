@@ -25,7 +25,12 @@ public class Backup extends Restful<JsonArray, String, RemindersyncboxModel> {
     @Override
     protected String storeModel(JsonArray in) { 
     	log("store model %s", null, in);
-    	var storeDir = getConfigValue("store_dir", System.getProperty("user.home"));
+    	var storeDir = new File(getConfigValue("store_dir", System.getProperty("user.home")));
+    	if (!storeDir.exists()) 
+    		if (!storeDir.mkdirs())
+    			return """
+	           {"code":"ERROR"}
+	        """;
     	var f = new File(storeDir, "myremiders.bak");
     	f.delete();
     	File f2 = new File(storeDir, "myremiders.json");
