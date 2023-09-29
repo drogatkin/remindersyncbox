@@ -78,13 +78,9 @@
     <task exec="javac">
        <parameter value="-classpath"/>
        <parameter variable="class path"/>
-       <parameter value="-source"/>
-       <parameter variable="comp target"/>
-       <parameter value="-target"/>
-       <parameter variable="comp target"/>
-       <parameter value="-d"/>comp target
+       <parameter value="-d"/>
        <parameter value="&build_directory;" type="path"/>
-       <parameter variable="java sources"/>>
+       <parameter variable="java sources"/>
       <onexit>
         <if>
           <expression>
