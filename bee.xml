@@ -78,6 +78,9 @@
     <task exec="javac">
        <parameter value="-classpath"/>
        <parameter variable="class path"/>
+       <parameter value="--enable-preview"/>
+       <parameter value="-source"/>
+       <parameter value="21"/>
        <parameter value="-d"/>
        <parameter value="&build_directory;" type="path"/>
        <parameter variable="java sources"/>

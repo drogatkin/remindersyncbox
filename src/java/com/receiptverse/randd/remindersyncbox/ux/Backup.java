@@ -24,13 +24,16 @@ public class Backup extends Restful<JsonArray, String, RemindersyncboxModel> {
 	
     @Override
     protected String storeModel(JsonArray in) { 
-    	log("store model %s", null, in);
+    //	log("store model of: %s", null, in);
     	var storeDir = new File(getConfigValue("store_dir", System.getProperty("user.home")));
     	if (!storeDir.exists()) 
-    		if (!storeDir.mkdirs())
+    		if (!storeDir.mkdirs()) {
+    			log(STR."Can't create \{storeDir}", null);
     			return """
-	           {"code":"ERROR"}
-	        """;
+    			           {"code":"ERROR"}
+    			        """;
+    		}
+    		
     	var f = new File(storeDir, "myremiders.bak");
     	f.delete();
     	File f2 = new File(storeDir, "myremiders.json");
@@ -38,6 +41,7 @@ public class Backup extends Restful<JsonArray, String, RemindersyncboxModel> {
     		f2.renameTo(f);
     	try (OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(f2), "UTF-8")) {
     		ow.write(in.toString());
+    		log(STR."stored in \{f2}", null);
     	} catch (IOException ie) {
     		log("", ie);
     		return """
