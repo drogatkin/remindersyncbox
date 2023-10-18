@@ -21,11 +21,14 @@ import javax.json.JsonArray;
 
 public class Backup extends Restful<JsonArray, String, RemindersyncboxModel> {
     // TODO backup/store name manipulation isolate in a separate method
+	private static final String STORE_NAME = "myremiders.json";
+	
+	private static final String STORE_PROP = "store_dir";
 	
     @Override
     protected String storeModel(JsonArray in) { 
     //	log("store model of: %s", null, in);
-    	var storeDir = new File(getConfigValue("store_dir", System.getProperty("user.home")));
+    	var storeDir = new File(getConfigValue(STORE_PROP, System.getProperty("user.home")));
     	if (!storeDir.exists()) 
     		if (!storeDir.mkdirs()) {
     			log(STR."Can't create \{storeDir}", null);
@@ -36,7 +39,7 @@ public class Backup extends Restful<JsonArray, String, RemindersyncboxModel> {
     		
     	var f = new File(storeDir, "myremiders.bak");
     	f.delete();
-    	File f2 = new File(storeDir, "myremiders.json");
+    	File f2 = new File(storeDir, STORE_NAME);
     	if (f2.exists())
     		f2.renameTo(f);
     	try (OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(f2), "UTF-8")) {
@@ -65,9 +68,8 @@ public class Backup extends Restful<JsonArray, String, RemindersyncboxModel> {
     }
     
     protected String loadModel(JsonArray in) {
-    	log("load model %s", null, in);
-    	String storeDir = getConfigValue("store_dir", System.getProperty("user.home"));
-    	File f2 = new File(storeDir, "myremiders.json");
+    	var  f2 = new File(getConfigValue(STORE_PROP, System.getProperty("user.home")), STORE_NAME);
+    	log("load model from %s", null, f2);
     	if (f2.exists()) { 
     		try (FileInputStream is = new FileInputStream(f2)){
     			return Stream.streamToString(is, "UTF-8", -1);
