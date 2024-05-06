@@ -21,7 +21,9 @@ import javax.json.JsonArray;
 
 public class Backup extends Restful<JsonArray, String, RemindersyncboxModel> {
     // TODO backup/store name manipulation isolate in a separate method
-	private static final String STORE_NAME = "myremiders.json";
+	private static final String STORE_EXT = ".json";
+
+	private static final String DEF_STORE_NAME = "myremiders";
 	
 	private static final String STORE_PROP = "store_dir";
 	
@@ -36,10 +38,11 @@ public class Backup extends Restful<JsonArray, String, RemindersyncboxModel> {
     			           {"code":"ERROR"}
     			        """;
     		}
-    		
-    	var f = new File(storeDir, "myremiders.bak");
+    	if (key	== null || key.isBlank())
+			key = DEF_STORE_NAME;
+    	var f = new File(storeDir, key + ".bak");
     	f.delete();
-    	File f2 = new File(storeDir, STORE_NAME);
+    	File f2 = new File(storeDir, key + STORE_EXT);
     	if (f2.exists())
     		f2.renameTo(f);
     	try (OutputStreamWriter ow = new OutputStreamWriter(new FileOutputStream(f2), "UTF-8")) {
@@ -68,7 +71,9 @@ public class Backup extends Restful<JsonArray, String, RemindersyncboxModel> {
     }
     
     protected String loadModel(JsonArray in) {
-    	var  f2 = new File(getConfigValue(STORE_PROP, System.getProperty("user.home")), STORE_NAME);
+		if (key	== null || key.isBlank())
+			key = DEF_STORE_NAME;
+    	var  f2 = new File(getConfigValue(STORE_PROP, System.getProperty("user.home")), key + STORE_EXT);
     	log("load model from %s", null, f2);
     	if (f2.exists()) { 
     		try (FileInputStream is = new FileInputStream(f2)){
